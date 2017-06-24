@@ -10,9 +10,9 @@ public interface Preference<T> {
 
     void set(T value);
 
-    void register(Observer<T> observer);
+    void observe(Observer<T> observer);
 
-    void unregister(Observer<T> observer);
+    void disconnect(Observer<T> observer);
 
     interface Observer<T> {
         void call(Preference<T> preference, T value);

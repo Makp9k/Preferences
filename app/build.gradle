@@ -26,4 +26,8 @@ dependencies {
     })
     implementation 'com.android.support:appcompat-v7:26.0.0-beta2'
     testImplementation 'junit:junit:4.12'
+
+    implementation project(':preference')
+    implementation project(':preference-annotations')
+    annotationProcessor project(':preference-processor')
 }
