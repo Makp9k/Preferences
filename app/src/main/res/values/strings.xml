@@ -1,4 +1,9 @@
 <resources>
-    <string name="app_name">Preferences</string>
-    <string name="title_activity_test">TestActivity</string>
+    <string name="app_name">Application Preferences Sample</string>
+
+    <string-array name="gender">
+        <item>Neutral</item>
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
 </resources>

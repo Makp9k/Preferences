@@ -4,8 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Preferences.iml" filepath="$PROJECT_DIR$/Preferences.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/preference/preference.iml" filepath="$PROJECT_DIR$/preference/preference.iml" />
-      <module fileurl="file://$PROJECT_DIR$/preference-processor/preference-processor.iml" filepath="$PROJECT_DIR$/preference-processor/preference-processor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/preferences/preferences.iml" filepath="$PROJECT_DIR$/preferences/preferences.iml" />
+      <module fileurl="file://$PROJECT_DIR$/preferences-processor/preference-processor.iml" filepath="$PROJECT_DIR$/preferences-processor/preference-processor.iml" />
     </modules>
   </component>
 </project>
