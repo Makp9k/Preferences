@@ -1,7 +1,9 @@
-package de.appsfactory.mvp.preferences;
+package de.appsfactory.mvp.preferences.base;
 
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicReference;
+
+import de.appsfactory.mvp.preferences.Preference;
 
 /**
  * Created by Collider on 24.06.2017.
@@ -10,7 +12,8 @@ import java.util.concurrent.atomic.AtomicReference;
 public class BasePreference<T> implements Preference<T> {
 
     final CopyOnWriteArraySet<Observer<T>> observers = new CopyOnWriteArraySet<>();
-    final AtomicReference<T> value = new AtomicReference<>();
+
+    protected final AtomicReference<T> value = new AtomicReference<>();
 
     @Override
     public T get() {
@@ -19,12 +22,17 @@ public class BasePreference<T> implements Preference<T> {
 
     @Override
     public void set(T value) {
+        T oldValue = get();
         this.value.set(value);
+        if (oldValue != value) {
+            notifyObservers(value);
+        }
     }
 
     @Override
     public void observe(Observer<T> observer) {
         observers.add(observer);
+        observer.call(this, get());
     }
 
     @Override
@@ -32,9 +40,9 @@ public class BasePreference<T> implements Preference<T> {
         observers.remove(observer);
     }
 
-    protected void notifyObservers() {
+    private void notifyObservers(T value) {
         for (Observer<T> observer : observers) {
-            observer.call(this, get());
+            observer.call(this, value);
         }
     }
 

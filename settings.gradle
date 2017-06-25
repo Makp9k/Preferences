@@ -1,1 +1,1 @@
-include ':app', ':preference', ':preference-processor', ':preference-annotations'
+include ':app', ':preference', ':preference-processor'

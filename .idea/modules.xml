@@ -2,11 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Preferences.iml" filepath="$PROJECT_DIR$/.idea/Preferences.iml" />
-      <module fileurl="file://C:\Development\android\Preferences\Preferences.iml" filepath="C:\Development\android\Preferences\Preferences.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Preferences.iml" filepath="$PROJECT_DIR$/Preferences.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/preference/preference.iml" filepath="$PROJECT_DIR$/preference/preference.iml" />
-      <module fileurl="file://$PROJECT_DIR$/preference-annotations/preference-annotations.iml" filepath="$PROJECT_DIR$/preference-annotations/preference-annotations.iml" />
       <module fileurl="file://$PROJECT_DIR$/preference-processor/preference-processor.iml" filepath="$PROJECT_DIR$/preference-processor/preference-processor.iml" />
     </modules>
   </component>

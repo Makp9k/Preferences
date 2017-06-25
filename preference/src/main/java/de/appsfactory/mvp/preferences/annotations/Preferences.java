@@ -1,4 +1,4 @@
-package de.appsfactory.mvp.preference.annotations;
+package de.appsfactory.mvp.preferences.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
