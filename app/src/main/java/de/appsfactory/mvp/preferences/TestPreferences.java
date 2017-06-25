@@ -2,6 +2,7 @@ package de.appsfactory.mvp.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.LabeledIntent;
 import android.widget.Toast;
 
 import de.appsfactory.mvp.preferences.annotations.PreferenceOptions;
@@ -15,7 +16,7 @@ import de.appsfactory.mvp.preferences.annotations.Preferences;
 public interface TestPreferences {
 
     @PreferenceOptions(defaultStringValue = "12345", adapter = MyPreferenceAdapter.class)
-    Preference<String> appName();
+    Preference<LabeledIntent> appName();
 
     Preference<Integer> buildVersion();
 
@@ -25,7 +26,7 @@ public interface TestPreferences {
 //    @PreferenceOptions(adapter = MyPreferenceAdapter.class, defaultStringValue = "kvzar")
 //    Preference<String> ktuk();
 //
-    class MyPreferenceAdapter implements PreferenceAdapter<String> {
+    class MyPreferenceAdapter implements PreferenceAdapter<LabeledIntent> {
         private Context context;
 
         @Override
@@ -34,14 +35,15 @@ public interface TestPreferences {
         }
 
         @Override
-        public String read(SharedPreferences sharedPreferences, String key, String defaultValue) {
-            return sharedPreferences.getString(key, defaultValue);
+        public LabeledIntent read(SharedPreferences sharedPreferences, String key, LabeledIntent defaultValue) {
+//            return sharedPreferences.getString(key, defaultValue);
+            return null;
         }
 
         @Override
-        public void write(SharedPreferences sharedPreferences, String key, String value) {
-            Toast.makeText(context, value, Toast.LENGTH_SHORT).show();
-            sharedPreferences.edit().putString(key, value).apply();
+        public void write(SharedPreferences sharedPreferences, String key, LabeledIntent value) {
+//            Toast.makeText(context, value, Toast.LENGTH_SHORT).show();
+//            sharedPreferences.edit().putString(key, value).apply();
         }
     }
 }

@@ -20,21 +20,21 @@ public class TestActivity extends AppCompatActivity {
         final AppSettings appSettings = new AppSettingsImpl(this);
 
         final TextView text = findViewById(R.id.text);
-        preferences.appName().observe(new Preference.Observer<String>() {
-            @Override
-            public void call(Preference<String> preference, String value) {
-                text.setText(value + " " + appSettings.uptime().get());
-            }
-        });
-
-
-        Button button = findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                preferences.appName().set(preferences.appName().get() + "" + (int) (Math.random() * 10));
-            }
-        });
+//        preferences.appName().observe(new Preference.Observer<String>() {
+//            @Override
+//            public void call(Preference<String> preference, String value) {
+//                text.setText(value + " " + appSettings.uptime().get());
+//            }
+//        });
+//
+//
+//        Button button = findViewById(R.id.button);
+//        button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                preferences.appName().set(preferences.appName().get() + "" + (int) (Math.random() * 10));
+//            }
+//        });
     }
 
 }

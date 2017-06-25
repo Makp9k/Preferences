@@ -136,7 +136,10 @@ public class PreferencesModel {
             constructorBuilder.addStatement(
                     "$L = new $T(sharedPreferences, $S, $L, $L)",
                     entry.getName(),
-                    ClassName.get(BASE_PACKAGE_NAME + ".concrete", entry.getPreferenceTypeName()),
+                    ParameterizedTypeName.get(
+                            ClassName.get(BASE_PACKAGE_NAME + ".concrete", entry.getPreferenceTypeName()),
+                            ClassName.bestGuess(entry.getType())
+                    ),
                     entry.getName(),
                     entry.getDefaultValue(),
                     "adapter" + ClassName.bestGuess(entry.getCustomAdapter()).simpleName()
