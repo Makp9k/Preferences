@@ -20,6 +20,7 @@ import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
 
 import de.appsfactory.mvp.preferences.annotations.Preferences;
+import de.appsfactory.mvp.preferences.processor.codegen.PreferencesWriter;
 import de.appsfactory.mvp.preferences.processor.models.PreferencesModel;
 import de.appsfactory.mvp.preferences.processor.visitors.PreferenceEntryVisitor;
 
@@ -63,7 +64,7 @@ public class PreferenceProcessor extends AbstractProcessor {
                 PreferencesModel preferencesModel = preferenceEntryVisitor.visitPreferences(typeElement);
                 messager.printMessage(Diagnostic.Kind.WARNING, "RESULT " + preferencesModel);
 
-                JavaFile javaFile = preferencesModel.brewJava();
+                JavaFile javaFile = new PreferencesWriter(preferencesModel).brewJava();
                 try {
                     javaFile.writeTo(filer);
                 } catch (IOException e) {

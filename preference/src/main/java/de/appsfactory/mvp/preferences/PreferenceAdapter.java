@@ -10,7 +10,7 @@ import android.content.SharedPreferences;
 public interface PreferenceAdapter<T> {
     void init(Context context);
 
-    T read(SharedPreferences sharedPreferences, String key, T defaultValue);
+    T read(SharedPreferences sharedPreferences, String key);
 
     void write(SharedPreferences sharedPreferences, String key, T value);
 }

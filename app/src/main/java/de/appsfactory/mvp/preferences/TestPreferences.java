@@ -35,7 +35,7 @@ public interface TestPreferences {
         }
 
         @Override
-        public LabeledIntent read(SharedPreferences sharedPreferences, String key, LabeledIntent defaultValue) {
+        public LabeledIntent read(SharedPreferences sharedPreferences, String key) {
 //            return sharedPreferences.getString(key, defaultValue);
             return null;
         }

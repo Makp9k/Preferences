@@ -15,15 +15,15 @@ public class CustomPersistentPreference<T> extends PersistentPreference<T> {
     private final AtomicBoolean initialized = new AtomicBoolean(false);
     private final PreferenceAdapter<T> preferenceAdapter;
 
-    public CustomPersistentPreference(SharedPreferences sharedPreferences, String key, T defaultValue, PreferenceAdapter<T> preferenceAdapter) {
-        super(sharedPreferences, key, defaultValue);
+    public CustomPersistentPreference(SharedPreferences sharedPreferences, String key, PreferenceAdapter<T> preferenceAdapter) {
+        super(sharedPreferences, key, null);
         this.preferenceAdapter = preferenceAdapter;
     }
 
     @Override
     public T get() {
         if (!initialized.getAndSet(true)) {
-            value.set(preferenceAdapter.read(sharedPreferences, key, defaultValue));
+            value.set(preferenceAdapter.read(sharedPreferences, key));
         }
         return super.get();
     }
