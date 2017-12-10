@@ -32,6 +32,7 @@ public class PreferencesWriter {
 
     public JavaFile brewJava() {
         return JavaFile.builder(preferencesModel.getPackageName(), createType())
+                .skipJavaLangImports(true)
                 .build();
     }
 
@@ -66,7 +67,7 @@ public class PreferencesWriter {
     private TypeName createTypeName(PreferenceEntryModel entry) {
         return ParameterizedTypeName.get(
                 ClassName.get(BASE_PACKAGE_NAME, "Preference"),
-                ClassName.bestGuess(entry.getType())
+                entry.getType()
         );
     }
 
@@ -105,33 +106,34 @@ public class PreferencesWriter {
     private void addCustomAdapterInitializer(MethodSpec.Builder constructorBuilder, String adapterClassName) {
         ClassName className = ClassName.bestGuess(adapterClassName);
         constructorBuilder.addStatement(
-                "$T $L = new $T()",
+                "$T $N = new $T()",
                 className,
                 "adapter" + className.simpleName(),
                 className
         );
         constructorBuilder.addStatement(
-                "$L.init(context)",
+                "$N.init(context)",
                 "adapter" + className.simpleName()
         );
     }
 
     private void addFieldInitializer(MethodSpec.Builder constructorBuilder, PreferenceEntryModel entry) {
         if (entry.getCustomAdapter() == null) {
+            String defaultValueName = entry.writeDefaultValueInitializer(constructorBuilder);
             constructorBuilder.addStatement(
-                    "$L = new $T(sharedPreferences, $S, $L)",
+                    "$L = new $T(sharedPreferences, $S, $N)",
                     entry.getName(),
                     ClassName.get(BASE_PACKAGE_NAME + ".concrete", entry.getPreferenceTypeName()),
                     entry.getName(),
-                    entry.getDefaultValue()
+                    defaultValueName
             );
         } else {
             constructorBuilder.addStatement(
-                    "$L = new $T(sharedPreferences, $S, $L)",
+                    "$L = new $T(sharedPreferences, $S, $N)",
                     entry.getName(),
                     ParameterizedTypeName.get(
                             ClassName.get(BASE_PACKAGE_NAME + ".concrete", entry.getPreferenceTypeName()),
-                            ClassName.bestGuess(entry.getType())
+                            entry.getType()
                     ),
                     entry.getName(),
                     "adapter" + ClassName.bestGuess(entry.getCustomAdapter()).simpleName()

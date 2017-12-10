@@ -1,10 +1,14 @@
 package de.appsfactory.preferences.processor.models;
 
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.TypeName;
+
 /**
  * Created by Admin on 24.06.2017.
  */
 
-public class PreferenceEntryModel {
+public abstract class PreferenceEntryModel {
 
     private String name;
     private String type;
@@ -24,8 +28,8 @@ public class PreferenceEntryModel {
         return name;
     }
 
-    public String getType() {
-        return type;
+    public TypeName getType() {
+        return ClassName.bestGuess(type);
     }
 
     public String getPreferenceTypeName() {
@@ -50,4 +54,6 @@ public class PreferenceEntryModel {
                 ", customAdapter='" + customAdapter + '\'' +
                 '}';
     }
+
+    public abstract String writeDefaultValueInitializer(MethodSpec.Builder builder);
 }

@@ -3,10 +3,7 @@ package de.appsfactory.preferences.processor.visitors;
 import com.google.auto.common.AnnotationMirrors;
 import com.google.auto.common.MoreElements;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 import javax.annotation.processing.Messager;
@@ -21,8 +18,15 @@ import javax.lang.model.util.SimpleTypeVisitor7;
 import javax.tools.Diagnostic;
 
 import de.appsfactory.preferences.annotations.PreferenceOptions;
+import de.appsfactory.preferences.processor.models.BooleanPreferenceEntryModel;
+import de.appsfactory.preferences.processor.models.CustomPreferenceEntryModel;
+import de.appsfactory.preferences.processor.models.FloatPreferenceEntryModel;
+import de.appsfactory.preferences.processor.models.IntegerPreferenceEntryModel;
+import de.appsfactory.preferences.processor.models.LongPreferenceEntryModel;
 import de.appsfactory.preferences.processor.models.PreferenceEntryModel;
 import de.appsfactory.preferences.processor.models.PreferencesModel;
+import de.appsfactory.preferences.processor.models.StringPreferenceEntryModel;
+import de.appsfactory.preferences.processor.models.StringSetPreferenceEntryModel;
 
 /**
  * Created by Collider on 24.06.2017.
@@ -30,25 +34,15 @@ import de.appsfactory.preferences.processor.models.PreferencesModel;
 
 public class PreferenceEntryVisitor extends ElementScanner7<Void, PreferencesModel> {
 
-    private static class FieldType {
-        private final String preferenceType;
-        private final Object defaultValue;
-
-        FieldType(String preferenceType, Object defaultValue) {
-            this.preferenceType = preferenceType;
-            this.defaultValue = defaultValue;
-        }
-    }
-
-    private static final Map<String, FieldType> defaultFieldTypes = new HashMap<>();
+    private static final Map<String, Class> preferenceModelsLookup = new HashMap<>();
 
     static {
-        defaultFieldTypes.put("java.lang.Integer", new FieldType("IntegerPersistentPreference", 0));
-        defaultFieldTypes.put("java.lang.Float", new FieldType("FloatPersistentPreference", 0f));
-        defaultFieldTypes.put("java.lang.Long", new FieldType("FloatPersistentPreference", 0L));
-        defaultFieldTypes.put("java.lang.Boolean", new FieldType("BooleanPersistentPreference", false));
-        defaultFieldTypes.put("java.lang.String", new FieldType("StringPersistentPreference", "\"\""));
-        defaultFieldTypes.put("java.utils.Set<String>", new FieldType("StringSetPersistentPreference", Collections.emptySet()));
+        preferenceModelsLookup.put("java.lang.Integer", IntegerPreferenceEntryModel.class);
+        preferenceModelsLookup.put("java.lang.Float", FloatPreferenceEntryModel.class);
+        preferenceModelsLookup.put("java.lang.Long", LongPreferenceEntryModel.class);
+        preferenceModelsLookup.put("java.lang.Boolean", BooleanPreferenceEntryModel.class);
+        preferenceModelsLookup.put("java.lang.String", StringPreferenceEntryModel.class);
+        preferenceModelsLookup.put("java.utils.Set<java.lang.String>", StringSetPreferenceEntryModel.class);
     }
 
     private final Messager messager;
@@ -94,12 +88,13 @@ public class PreferenceEntryVisitor extends ElementScanner7<Void, PreferencesMod
             } else {
                 String customAdapter = parseCustomAdapter(executableElement);
                 preferencesModel.getEntries().add(
-                        new PreferenceEntryModel(
-                                executableElement.getSimpleName().toString(),
+                        getPreferenceEntryModelByType(
+                                executableElement,
                                 type,
-                                parsePreferenceTypeName(executableElement, type, customAdapter),
+                                executableElement.getSimpleName().toString(),
                                 parseDefaultValue(executableElement, type),
-                                customAdapter)
+                                customAdapter
+                        )
                 );
             }
         }
@@ -107,49 +102,56 @@ public class PreferenceEntryVisitor extends ElementScanner7<Void, PreferencesMod
         return super.visitExecutable(executableElement, preferencesModel);
     }
 
-    private String parsePreferenceTypeName(ExecutableElement executableElement, String type, String customAdapter) {
-        if (customAdapter != null) {
-            return "CustomPersistentPreference";
+    private PreferenceEntryModel getPreferenceEntryModelByType(ExecutableElement executableElement,
+            String type, String name, Object defaultValue, String customAdapter) {
+
+        switch (type) {
+            case "java.lang.Integer":
+                return new IntegerPreferenceEntryModel(name, defaultValue, customAdapter);
+            case "java.lang.Float":
+                return new FloatPreferenceEntryModel(name, defaultValue, customAdapter);
+            case "java.lang.Long":
+                return new LongPreferenceEntryModel(name, defaultValue, customAdapter);
+            case "java.lang.Boolean":
+                return new BooleanPreferenceEntryModel(name, defaultValue, customAdapter);
+            case "java.lang.String":
+                return new StringPreferenceEntryModel(name, defaultValue, customAdapter);
+            case "java.util.Set<java.lang.String>":
+                return new StringSetPreferenceEntryModel(name, defaultValue, customAdapter);
+            default:
+                if (customAdapter != null) {
+                    return new CustomPreferenceEntryModel(name, type, defaultValue, customAdapter);
+                }
+
+                messager.printMessage(
+                        Diagnostic.Kind.ERROR,
+                        "Don't know how to handle type " + type + " of property " + executableElement + "\n" +
+                                "Try to specify custom adapter using the @PreferenceOptions annotation",
+                        executableElement
+                );
+                return null;
         }
-
-        FieldType defaultFieldType = defaultFieldTypes.get(type);
-        if (defaultFieldType != null) {
-            return defaultFieldType.preferenceType;
-        }
-
-        messager.printMessage(
-                Diagnostic.Kind.ERROR,
-                "Don't know how to handle type " + type + " of property " + executableElement + "\n" +
-                        "Try to specify custom adapter using the @PreferenceOptions annotation",
-                executableElement
-        );
-
-        return null;
     }
 
-    private Object parseDefaultValue(ExecutableElement executableElement, String type) {
+    private String parseDefaultValue(ExecutableElement executableElement, String type) {
         PreferenceOptions options = executableElement.getAnnotation(PreferenceOptions.class);
         if (options == null) {
-            FieldType fieldType = defaultFieldTypes.get(type);
-            if (fieldType != null) {
-                return fieldType.defaultValue;
-            }
             return null;
         }
 
         switch (type) {
             case "java.lang.Integer":
-                return options.defaultIntValue();
+                return String.valueOf(options.defaultIntValue());
             case "java.lang.Float":
-                return options.defaultFloatValue();
+                return String.valueOf(options.defaultFloatValue());
             case "java.lang.Long":
-                return options.defaultLongValue();
+                return String.valueOf(options.defaultLongValue());
             case "java.lang.Boolean":
-                return options.defaultBooleanValue();
+                return String.valueOf(options.defaultBooleanValue());
             case "java.lang.String":
                 return "\"" + options.defaultStringValue() + "\"";
-            case "java.util.Set<String>":
-                return new HashSet<>(Arrays.asList(options.defaultStringSetValue()));
+            case "java.util.Set<java.lang.String>":
+                return String.join(", ", options.defaultStringSetValue());
         }
         return null;
     }
